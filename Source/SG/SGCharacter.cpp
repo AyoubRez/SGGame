@@ -6,7 +6,9 @@
 #include "Camera/CameraComponent.h"
 
 // Sets default values
-ASGCharacter::ASGCharacter()
+ASGCharacter::ASGCharacter():
+BaseTurnRate(45.f),
+BaseLookUpRate(45.f)
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -63,6 +65,20 @@ void ASGCharacter::MoveRight(float Value)
 		AddMovementInput(Direction,Value);
 	}
 }
+//TurnAtRate Implementation *************************
+void ASGCharacter::TurnAtRate(float Rate)
+{
+	//calculate delta for this frame from the rate information
+	AddControllerYawInput(Rate*BaseTurnRate*GetWorld()->GetDeltaSeconds());
+}
+
+
+//LookUpAtRate Implementation *************************
+void ASGCharacter::LookUpAtRate(float Rate)
+{
+	//calculate delta for this frame from the rate information
+	AddControllerPitchInput(Rate*BaseLookUpRate*GetWorld()->GetDeltaSeconds());
+}
 
 // Called every frame
 void ASGCharacter::Tick(float DeltaTime)
@@ -82,5 +98,7 @@ void ASGCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 	PlayerInputComponent->BindAxis("MoveForward",this,&ASGCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight",this,&ASGCharacter::MoveRight);
+	PlayerInputComponent->BindAxis("TurnRate",this,&ASGCharacter::TurnAtRate);
+	PlayerInputComponent->BindAxis("LookUpRate",this,&ASGCharacter::LookUpAtRate);
 }
 
